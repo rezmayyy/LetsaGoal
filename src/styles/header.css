@@ -1,0 +1,20 @@
+.header {
+    background-color: white;
+    color: rgb(50, 50, 50);    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-and-name {
+    font-size: 1.5rem;
+    margin-left: 3rem;
+}
+
+.nav-links {
+    margin-top: 1rem;
+    padding-right: 5rem;
+    display: flex;
+    gap: 1rem;
+}
+
