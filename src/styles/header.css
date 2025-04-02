@@ -18,3 +18,8 @@
     gap: 1rem;
     transform: translateY(10px);
 }
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
