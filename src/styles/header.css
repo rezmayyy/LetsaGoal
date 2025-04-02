@@ -16,5 +16,5 @@
     padding-right: 5rem;
     display: flex;
     gap: 1rem;
+    transform: translateY(10px);
 }
-
