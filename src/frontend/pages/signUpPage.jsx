@@ -9,23 +9,22 @@ function SignUpPage() {
     const navigate = useNavigate();
     const auth = getAuth();
 
-    // Redirect user if they are already logged in
+    // Check if user is logged in and redirect them to home if they are
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                navigate('');
+                navigate('/home');
             }
         });
         return () => unsubscribe();
     }, [auth, navigate]);
 
+    // function handleSignUp(e) { ... } creates user
     const handleSignUp = async (e) => {
         e.preventDefault();
         const auth = getAuth();
-
         try {
             await createUserWithEmailAndPassword(auth, email, password);
-            navigate("/home");
         } catch (error) {
             setError(error.message);
         }
@@ -40,6 +39,7 @@ function SignUpPage() {
 
                         {error && <div className="alert alert-danger">{error}</div>}
 
+                        {/* email input  */}
                         <form onSubmit={handleSignUp}>
                             <div className="mb-3">
                                 <label className="form-label">Email</label>
@@ -52,9 +52,10 @@ function SignUpPage() {
                                 />
                             </div>
 
+                        {/* password input */}
                             <div className="mb-3">
                                 <label className="form-label">Password</label>
-                                <input
+                                <input 
                                     type="password"
                                     className="form-control"
                                     value={password}
@@ -62,10 +63,7 @@ function SignUpPage() {
                                     required
                                 />
                             </div>
-
-                            <button type="submit" className="btn btn-primary w-100">
-                                Sign Up
-                            </button>
+                            <button type="submit" className="btn btn-primary w-100">Sign Up</button>
                         </form>
                     </div>
                 </div>
