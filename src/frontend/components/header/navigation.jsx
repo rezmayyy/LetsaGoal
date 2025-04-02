@@ -23,13 +23,10 @@ function Navigation() {
                         </div>
                     ) : (
                         <div className="auth-buttons">
-                            <Link to="/signup">
-                                <Button className="dark-button">Sign Up</Button>
-                            </Link>
-                            <Button className="light-button">Log In</Button>
+                            <Link to="/signup"><Button className="dark-button">Sign Up</Button></Link>
+                            <Link to="/login"><Button className="light-button">Log In</Button></Link>
                         </div>)
                     }
-
                 </Navbar.Collapse>
             </Container>
         </Navbar>

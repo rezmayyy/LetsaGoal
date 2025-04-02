@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const auth = getAuth();
 
+    // Listen for auth state change
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -14,6 +15,7 @@ export const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
+    // Log out function
     const logout = async () => {
         await signOut(auth);
     };
