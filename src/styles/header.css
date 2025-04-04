@@ -14,9 +14,9 @@
     position: absolute;
     bottom: 0; 
     left: 0%; 
-    width: 80%; 
+    width: 50%; 
     height: 3px; 
-    background-color: rgba(50, 50, 255, 1);
+    background-color: rgb(250, 200, 0);
 }
 
 .logo-and-name {

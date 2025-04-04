@@ -10,15 +10,19 @@ function Navigation() {
             <Container>
                 <Navbar.Toggle aria-controls="navbar-nav" />
                 <Navbar.Collapse id="navbar-nav">
-                    <Nav className="nav-links me-auto">
+                    <Nav className="nav-links">
+                        {user && (
+                            <Nav.Link>
+                                <strong>
+                                    <p className="mb-2">Welcome, {user.email}</p>
+                                </strong>
+                            </Nav.Link>
+                        )}
                         <Nav.Link as={Link} to="/home">Home </Nav.Link>
                         <Nav.Link as={Link} to="/test">About </Nav.Link>
                         <Nav.Link as={Link} to="/home">Contact </Nav.Link>
-                    </Nav>
-
-                    {user ? (
+                        {user ? (
                         <div>
-                            <p>Welcome, {user.email}</p>
                             <Button className="light-button" onClick={logout}>Logout</Button>
                         </div>
                     ) : (
@@ -27,6 +31,8 @@ function Navigation() {
                             <Link to="/login"><Button className="light-button">Log In</Button></Link>
                         </div>)
                     }
+                    </Nav>
+
                 </Navbar.Collapse>
             </Container>
         </Navbar>

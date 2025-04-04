@@ -1,4 +1,5 @@
 import { Container, Row, Col, Card, Nav, Navbar, Alert, Button, Form } from 'react-bootstrap';
+import '../../styles/testPage.css';
 
 function TestPage() {
     return (
@@ -26,7 +27,7 @@ function TestPage() {
                     </Card.Body>
                     <Card.Footer className="text-muted">
                         Hello, Footer!<br></br>
-                        <Button variant="primary">Button</Button>
+                        <div class="menu icon"></div>
                     </Card.Footer>
                 </Card>
             </Row>

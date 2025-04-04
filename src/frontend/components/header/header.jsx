@@ -6,7 +6,7 @@ function Header() {
     return (
         <header className="header">
             <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="logo-and-name">Hello, Header!</div>
+                <div className="logo-and-name">Let's-a-Goal!</div>
             </Link>
             <Navigation />
         </header>
