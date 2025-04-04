@@ -6,6 +6,7 @@ import HomePage from './frontend/pages/homePage';
 import SignUpPage from './frontend/pages/signUpPage';
 import LogInPage from './frontend/pages/logInPage';
 import ProtectedRoute from './frontend/components/routes/protectedRoute';
+import TestPage from './frontend/pages/testPage';
 import './App.css';
 
 function App() {
@@ -18,7 +19,8 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<SignUpPage />} />
-            <Route path="login" element={<LogInPage />} />
+            <Route path="/login" element={<LogInPage />} />
+            <Route path="/test" element={<TestPage />} />
 
             {/* Protected Routes  */}
             <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
