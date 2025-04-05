@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../../firebase/firebase';
+import SHA256 from 'crypto-js/sha256';
+import { v4 as uuidv4 } from 'uuid';
 
 function SignUpPage() {
+    const [username, setUsername] = useState('');
+    const salt = uuidv4();
+    const saltedUsername = username.trim().toLowerCase() + salt;
+    const hashedUsername = SHA256(username.trim().toLowerCase()).toString();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const auth = getAuth();
 
     // Check if user is logged in and redirect them to home if they are
     useEffect(() => {
@@ -19,12 +27,63 @@ function SignUpPage() {
         return () => unsubscribe();
     }, [auth, navigate]);
 
-    // function handleSignUp(e) { ... } creates user
+    // Handle Signup. function handleSignUp(e) { ... } creates user and store info in firestore
     const handleSignUp = async (e) => {
         e.preventDefault();
-        const auth = getAuth();
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!")
+            return;
+        }
+
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            const usernameTrimmed = username.trim().toLowerCase();
+            const usernameRef = doc(db, "usernames", usernameTrimmed);
+            const usernameSnap = await getDoc(usernameRef);
+
+            // Check if username already exists
+            if (usernameSnap.exists()) {
+                setError("Username already taken! Please choose another.");
+                return;
+            }
+
+            // Create account with Firebase Authentication
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await user.getIdToken(true);
+
+            // Ensure user is authenticated by waiting for `onAuthStateChanged`
+            await new Promise((resolve) => {
+                const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+                    if (firebaseUser && firebaseUser.uid === user.uid) {
+                        resolve();
+                        unsubscribe();
+                    }
+                });
+            });
+
+            // Store user data in Firestore 'users' collection
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                email: user.email.trim(),
+                username: username.trim(),
+                usernameLower: username.trim().toLowerCase(),
+                createdAt: new Date()
+            });
+
+            // Store username in Firestore 'usernames' collection
+            await setDoc(usernameRef, {
+                uid: user.uid
+            });
+
+            // Store email and salt value in 'hashedUsernames' collection
+            await setDoc(doc(db, "hashedUsernames", hashedUsername), {
+                salt: salt,
+                email: user.email.trim()
+            });
+            
         } catch (error) {
             setError(error.message);
         }
@@ -39,8 +98,21 @@ function SignUpPage() {
 
                         {error && <div className="alert alert-danger">{error}</div>}
 
-                        {/* email input  */}
                         <form onSubmit={handleSignUp}>
+
+                            {/* username input */}
+                            <div className="mb-3">
+                                <label className="form-label">Username</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            {/* email input  */}
                             <div className="mb-3">
                                 <label className="form-label">Email</label>
                                 <input
@@ -52,14 +124,26 @@ function SignUpPage() {
                                 />
                             </div>
 
-                        {/* password input */}
+                            {/* password input */}
                             <div className="mb-3">
                                 <label className="form-label">Password</label>
-                                <input 
+                                <input
                                     type="password"
                                     className="form-control"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            {/* confirm password input */}
+                            <div className="mb-3">
+                                <label className="form-label">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
                                 />
                             </div>

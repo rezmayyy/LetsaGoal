@@ -5,7 +5,7 @@ import image2 from '../../assets/image2.png';
 
 function LandingPage() {
     return (
-        <Container className="container-md rounded" style={{ maxWidth: "90%" }}>
+        <Container className="container-md rounded mt-5" style={{ maxWidth: "90%" }}>
             <Row className="d-flex justify-content-center" style={{ columnGap: "50px" }}>
 
                 {/* Quadrant 1 */}
