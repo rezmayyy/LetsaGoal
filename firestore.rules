@@ -2,8 +2,45 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+  
+		// ----- Users Collection ------ // 
+    match /users/{userId} {
+    	// Authenticated Users can read and write to their own document
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+    
+    // ----- Usernames Collection ----- //
+    match /usernames/{username} {
+    	// Authenticated Users can read to check if username is taken
+    	allow read: if true;
+    	// Authenticated Users can create and delete documents that match their UID
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+    
+    // ----- Hashed Usernames + Key ----- // 
+    match /hashedUsernamesAndKey/{hashedUsernameAndKey} {
+    	// Allow everyone to read
+    	allow read: if true;
+      // Allow Authenticated Users to create
+      allow create: if request.auth != null;
+      // Don't allow anyone to update 
+      allow update: if false;
+      // Don't allow anyone to delete
+      allow delete: if false;
+    }
+    
+    // ----- Hashed Usernames + Key + Salt ----- // 
+    match /hashedUsernamesAndKeyAndSalt/{hashedUsernameAndKeyAndSalt} {
+    	// Allow everyone to read
+    	allow read: if true;
+      // Allow Authenticated Users to create
+      allow create: if request.auth != null;
+      // Don't allow anyone to update 
+      allow update: if false;
+      // Don't allow anyone to delete
+      allow delete: if false;
+    }
+    
   }
 }
