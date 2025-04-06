@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/firebase';
 import SHA256 from 'crypto-js/sha256';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,7 +27,7 @@ function SignUpPage() {
             }
         });
         return () => unsubscribe();
-    }, [auth, navigate]);
+    }, [navigate]);
 
     // Handle Signup. function handleSignUp(e) { ... } creates user and store info in firestore
     const handleSignUp = async (e) => {
