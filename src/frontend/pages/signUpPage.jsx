@@ -9,8 +9,10 @@ import { v4 as uuidv4 } from 'uuid';
 function SignUpPage() {
     const [username, setUsername] = useState('');
     const salt = uuidv4();
-    const saltedUsername = username.trim().toLowerCase() + salt;
-    const hashedUsername = SHA256(username.trim().toLowerCase()).toString();
+    const symmetricKey1 = process.env.REACT_APP_SYMMETRIC_KEY1;
+    const symmetricKey2 = process.env.REACT_APP_SYMMETRIC_KEY2;
+    const hashedUsernameAndKey = SHA256(username.trim().toLowerCase() + symmetricKey1).toString();
+    const hashedUsernameAndKeyAndSalt = SHA256(username.trim().toLowerCase() + symmetricKey2 + salt).toString();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -78,9 +80,13 @@ function SignUpPage() {
                 uid: user.uid
             });
 
-            // Store email and salt value in 'hashedUsernames' collection
-            await setDoc(doc(db, "hashedUsernames", hashedUsername), {
+            // Store salt value in 'hashedUsernamesAndKey' collection
+            await setDoc(doc(db, "hashedUsernamesAndKey", hashedUsernameAndKey), {
                 salt: salt,
+            });
+
+            // Store email in 'hashedUsernamesAndKeyAndSalt' collection
+            await setDoc(doc(db, "hashedUsernamesAndKeyAndSalt", hashedUsernameAndKeyAndSalt), {
                 email: user.email.trim()
             });
             

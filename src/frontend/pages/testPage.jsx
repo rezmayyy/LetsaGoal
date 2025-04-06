@@ -6,14 +6,11 @@ function TestPage() {
     const salt = uuidv4();
     const saltedUsername = username.trim().toLowerCase() + salt;
     const hashedUsername = SHA256(saltedUsername.trim().toLowerCase()).toString();
+    const secretKey = process.env.REACT_APP_SYMMETRIC_KEY1;
 
     return (
         <div>
-            <h1>Hello, Test Page!</h1>
             <h1>{username}</h1>
-            <h1>{salt}</h1>
-            <h1>{saltedUsername}</h1>
-            <h1>{hashedUsername}</h1>
         </div>
     )
 }
