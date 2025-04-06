@@ -31,21 +31,32 @@ function LogInPage() {
         try {
             // If login info doesnt include '@', process username
             if (!emailToUse.includes('@')) {
-                // User's username input being hashed
+                // User's username input being hashed with Key1 to find salt
                 const username = loginId.trim().toLowerCase();
-                const usernameRef = doc(db, "hashedUsernames", SHA256(username).toString());
-                const usernameSnap = await getDoc(usernameRef);
-                console.log("Username ref checkpoint");
+                const symmetricKey1 = process.env.REACT_APP_SYMMETRIC_KEY1;
+                const symmetricKey2 = process.env.REACT_APP_SYMMETRIC_KEY2;
+                const hashedUsernameAndKey = SHA256(username + symmetricKey1).toString();
 
-                // Check if hashed username is a document in hashedUsernames
-                if (!usernameSnap.exists()) {
-                    throw new Error("hashedUsername not found");
+                // Check if hashed username+key is a document in hashedUsernamesAndKey to find salt
+                const saltDocRef = doc(db, "hashedUsernamesAndKey", hashedUsernameAndKey);
+                const saltSnap = await getDoc(saltDocRef);
+                if (!saltSnap.exists()) {
+                    throw new Error("hashedUsernameAndKey not found");
                 }
+                
+                // Get salt from hashedUsernamesAndKey collection
+                const salt = saltSnap.data().salt;                
 
-                // Hashed username is in collection. We need the email
-                emailToUse = usernameSnap.data().email;
+                // Recreate hashedUsernameAndKeyAndSalt using symmetricKey2 and salt we just got
+                const hashedUsernameAndKeyAndSalt = SHA256(username + symmetricKey2 + salt).toString();
 
-                console.log("Attempting to read username document with ID:", emailToUse);
+                // Get email 
+                const emailDocRef = doc(db, "hashedUsernamesAndKeyAndSalt", hashedUsernameAndKeyAndSalt);
+                const emailSnap = await getDoc(emailDocRef);
+                if (!emailSnap.exists()) {
+                    throw new Error("hashedUsernameAndKeyAndSalt not found");
+                }
+                emailToUse = emailSnap.data().email;
             }
 
             // Otherwise just sign in with email
